@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Core patient info
 class Patient {
   final String id;
@@ -19,6 +17,27 @@ class Patient {
     required this.weight,
     required this.bloodType,
   });
+
+  // Serialization
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'wardRoomNo': wardRoomNo,
+    'name': name,
+    'age': age,
+    'height': height,
+    'weight': weight,
+    'bloodType': bloodType,
+  };
+
+  factory Patient.fromJson(Map<String, dynamic> json) => Patient(
+    id: json['id'] ?? '',
+    wardRoomNo: json['wardRoomNo'] ?? '',
+    name: json['name'] ?? '',
+    age: json['age'] ?? '',
+    height: json['height'] ?? '',
+    weight: json['weight'] ?? '',
+    bloodType: json['bloodType'] ?? '',
+  );
 }
 
 /// One snapshot of patient's condition / vitals
@@ -48,6 +67,35 @@ class PatientVitals {
     required this.wbc,
     required this.condition,
   });
+
+  // Serialization
+  Map<String, dynamic> toJson() => {
+    'date': date,
+    'temperature': temperature,
+    'bloodPressure': bloodPressure,
+    'heartRate': heartRate,
+    'oxygenSaturation': oxygenSaturation,
+    'urineOutput': urineOutput,
+    'creatinine': creatinine,
+    'egfr': egfr,
+    'lactate': lactate,
+    'wbc': wbc,
+    'condition': condition,
+  };
+
+  factory PatientVitals.fromJson(Map<String, dynamic> json) => PatientVitals(
+    date: json['date'] ?? '',
+    temperature: json['temperature'] ?? '',
+    bloodPressure: json['bloodPressure'] ?? '',
+    heartRate: json['heartRate'] ?? '',
+    oxygenSaturation: json['oxygenSaturation'] ?? '',
+    urineOutput: json['urineOutput'] ?? '',
+    creatinine: json['creatinine'] ?? '',
+    egfr: json['egfr'] ?? '',
+    lactate: json['lactate'] ?? '',
+    wbc: json['wbc'] ?? '',
+    condition: json['condition'] ?? '',
+  );
 }
 
 /// Record linking a patient to one vitals snapshot
@@ -59,6 +107,17 @@ class PatientConditionRecord {
     required this.patientId,
     required this.vitals,
   });
+
+  // Serialization
+  Map<String, dynamic> toJson() => {
+    'patientId': patientId,
+    'vitals': vitals.toJson(),
+  };
+
+  factory PatientConditionRecord.fromJson(Map<String, dynamic> json) => PatientConditionRecord(
+    patientId: json['patientId'] ?? '',
+    vitals: PatientVitals.fromJson(json['vitals'] ?? {}),
+  );
 }
 
 /// Doctor-accepted prescription queued for pharmacist verification
@@ -103,6 +162,27 @@ class VerifiedPlan {
     required this.doseText,
     required this.rationale,
   });
+
+  // Serialization
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'patientId': patientId,
+    'patientName': patientName,
+    'date': date,
+    'medicine': medicine,
+    'doseText': doseText,
+    'rationale': rationale,
+  };
+
+  factory VerifiedPlan.fromJson(Map<String, dynamic> json) => VerifiedPlan(
+    id: json['id'] ?? '',
+    patientId: json['patientId'] ?? '',
+    patientName: json['patientName'] ?? '',
+    date: json['date'] ?? '',
+    medicine: json['medicine'] ?? '',
+    doseText: json['doseText'] ?? '',
+    rationale: json['rationale'] ?? '',
+  );
 }
 
 /// AI rule check result for doctor's medicine

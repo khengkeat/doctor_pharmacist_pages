@@ -47,13 +47,15 @@ class _MedicationRecommendationPageState
   void _confirmAndSave() {
     if (_checkResult == null) return;
 
+    // If AI says it's wrong AND has suggestions AND none selected → block
     if (!_checkResult!.isCorrect &&
         _checkResult!.suggestedMedicines.isNotEmpty &&
         _selectedAiMedicine == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content:
-                Text('Please tick one AI-suggested medicine or verify again.')),
+          content:
+              Text('Please tick one AI-suggested medicine or verify again.'),
+        ),
       );
       return;
     }
@@ -103,8 +105,9 @@ class _MedicationRecommendationPageState
     final v = widget.vitals;
 
     return Scaffold(
-      appBar:
-          AppBar(title: const Text('Medication Recommendation Page'), centerTitle: true),
+      appBar: AppBar(
+          title: const Text('Medication Recommendation Page'),
+          centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: ListView(children: [
@@ -163,7 +166,8 @@ class _MedicationRecommendationPageState
                 onPressed: _verifyMedicine,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 14.0),
-                  child: Text('Verify Medicine', style: TextStyle(fontSize: 18)),
+                  child:
+                      Text('Verify Medicine', style: TextStyle(fontSize: 18)),
                 ),
               ),
             ),
@@ -180,6 +184,7 @@ class _MedicationRecommendationPageState
           ]),
           const SizedBox(height: 24),
 
+          // ===== AI result + Save section =====
           if (_checkResult != null) ...[
             const Text('AI Assessment (Demo Only):',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
@@ -200,16 +205,16 @@ class _MedicationRecommendationPageState
                   title: Text(m),
                 ),
               ),
-              const SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: _confirmAndSave,
-                icon: const Icon(Icons.save),
-                label: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                  child: Text('Confirm & Save', style: TextStyle(fontSize: 16)),
-                ),
-              ),
             ],
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _confirmAndSave,
+              icon: const Icon(Icons.save),
+              label: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.0),
+                child: Text('Confirm & Save', style: TextStyle(fontSize: 16)),
+              ),
+            ),
             const SizedBox(height: 12),
             const Text(
               'Prototype only — not medical advice.',

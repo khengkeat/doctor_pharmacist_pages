@@ -10,63 +10,74 @@ class PatientOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void openPharmacist() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PharmacistPage()),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Doctor Portal'), centerTitle: true),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/bg_doctor.png'), // background image
+            fit: BoxFit.cover,
+            opacity: 0.30,
+          ),
+        ),
+        child: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
+
+              const Text(
+                "Doctor Portal",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
               const Text(
                 'Patient Overview Page',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const PatientListPage()),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('Select Patient', style: TextStyle(fontSize: 18)),
-                  ),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const AddNewPatientPage()),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('Add New Patient', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: openPharmacist,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('Pharmacist Page', style: TextStyle(fontSize: 18)),
-                  ),
+
+              const SizedBox(height: 50),
+
+              // ---------- 3 BIGGER SQUARE BUTTONS ----------
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _squareButton(
+                      icon: Icons.people,
+                      label: "Select\nPatient",
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const PatientListPage()),
+                      ),
+                    ),
+
+                    _squareButton(
+                      icon: Icons.person_add,
+                      label: "Add New\nPatient",
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AddNewPatientPage()),
+                      ),
+                    ),
+
+                    _squareButton(
+                      icon: Icons.medical_services,
+                      label: "Pharmacist\nPage",
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const PharmacistPage()),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -75,9 +86,51 @@ class PatientOverviewPage extends StatelessWidget {
       ),
     );
   }
+
+  // ⭐ Bigger square button widget
+  Widget _squareButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: 140,     // ⬅ increased from 110
+      height: 140,    // ⬅ increased from 110
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(16),
+          backgroundColor: Colors.blue.shade600,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 50), // ⬅ bigger icon
+            const SizedBox(height: 12),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-/// ====== Add New Patient ======
+// ===================================================================
+// Add New Patient Page (unchanged)
+// ===================================================================
+
 class AddNewPatientPage extends StatefulWidget {
   const AddNewPatientPage({super.key});
 
@@ -117,9 +170,11 @@ class _AddNewPatientPageState extends State<AddNewPatientPage> {
       bloodType: _blood.text.trim(),
     );
     PatientDatabase.instance.addPatient(p);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Patient saved into database.')),
     );
+
     _wardRoom.clear();
     _name.clear();
     _age.clear();
@@ -133,10 +188,13 @@ class _AddNewPatientPageState extends State<AddNewPatientPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Patient'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Add New Patient'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -153,22 +211,23 @@ class _AddNewPatientPageState extends State<AddNewPatientPage> {
                 _field(_weight, 'Weight (kg)', kb: TextInputType.number),
                 _field(_blood, 'Blood Type (e.g. O+, A-)'),
                 const SizedBox(height: 24),
+
                 Row(children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _submit,
                       child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14.0),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         child: Text('Submit', style: TextStyle(fontSize: 18)),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: OutlinedButton(
+                    child: ElevatedButton(
                       onPressed: _home,
                       child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14.0),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         child: Text('Home', style: TextStyle(fontSize: 18)),
                       ),
                     ),
@@ -184,12 +243,14 @@ class _AddNewPatientPageState extends State<AddNewPatientPage> {
 
   Widget _field(TextEditingController c, String label, {TextInputType? kb}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: c,
         keyboardType: kb,
-        decoration:
-            InputDecoration(labelText: label, border: const OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
         validator: (v) =>
             (v == null || v.trim().isEmpty) ? 'Please enter $label' : null,
       ),
@@ -197,53 +258,119 @@ class _AddNewPatientPageState extends State<AddNewPatientPage> {
   }
 }
 
-/// ====== Patient List / Actions ======
-class PatientListPage extends StatelessWidget {
+// ===================================================================
+// Patient List Page (search bar + UI)
+// ===================================================================
+
+class PatientListPage extends StatefulWidget {
   const PatientListPage({super.key});
 
   @override
+  State<PatientListPage> createState() => _PatientListPageState();
+}
+
+class _PatientListPageState extends State<PatientListPage> {
+  String _searchQuery = '';
+
+  @override
   Widget build(BuildContext context) {
-    final patients = PatientDatabase.instance.patients;
+    final allPatients = PatientDatabase.instance.patients;
+
+    final patients = allPatients.where((p) {
+      final q = _searchQuery.toLowerCase();
+      return p.name.toLowerCase().contains(q) ||
+          p.wardRoomNo.toLowerCase().contains(q);
+    }).toList();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Select Patient'), centerTitle: true),
-      body: patients.isEmpty
-          ? const Center(
-              child: Text(
-                'No patients found.\nPlease add a new patient first.',
-                textAlign: TextAlign.center,
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(12.0),
-              itemCount: patients.length,
-              itemBuilder: (_, i) {
-                final p = patients[i];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 6.0),
-                  child: ListTile(
-                    title: Text(
-                      p.name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                    subtitle: Text(
-                      'Ward: ${p.wardRoomNo}\n'
-                      'Age: ${p.age}   Height: ${p.height} cm   Weight: ${p.weight} kg\n'
-                      'Blood Type: ${p.bloodType}',
-                    ),
-                    isThreeLine: true,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => PatientActionsPage(patient: p)),
-                    ),
+      appBar: AppBar(title: const Text('Select Patient')),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade50, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: TextField(
+                onChanged: (v) => setState(() => _searchQuery = v),
+                decoration: InputDecoration(
+                  labelText: 'Search Patient',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-              },
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+              ),
             ),
+
+            Expanded(
+              child: patients.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No patient found.",
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: patients.length,
+                      itemBuilder: (_, i) {
+                        final p = patients[i];
+                        return Card(
+                          elevation: 3,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Colors.blue.shade100,
+                              child:
+                                  Icon(Icons.person, color: Colors.blue.shade700),
+                            ),
+                            title: Text(
+                              p.name,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              'Ward: ${p.wardRoomNo}\n'
+                              'Age: ${p.age} | ${p.height} cm | ${p.weight} kg\n'
+                              'Blood Type: ${p.bloodType}',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                            isThreeLine: true,
+                            trailing: Icon(Icons.arrow_forward_ios,
+                                color: Colors.blue.shade600),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PatientActionsPage(patient: p),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+
+// ===================================================================
+// Patient Actions Page
+// ===================================================================
 
 class PatientActionsPage extends StatelessWidget {
   final Patient patient;
@@ -254,64 +381,91 @@ class PatientActionsPage extends StatelessWidget {
     void home() => Navigator.of(context).popUntil((r) => r.isFirst);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Patient Options'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(patient.name,
-              style:
-                  const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text('Ward Room No.: ${patient.wardRoomNo}'),
-          Text('Age: ${patient.age}'),
-          Text('Height: ${patient.height} cm'),
-          Text('Weight: ${patient.weight} kg'),
-          Text('Blood Type: ${patient.bloodType}'),
-          const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
+      appBar: AppBar(title: const Text('Patient Options')),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade50, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                color: Colors.blue.shade100,
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(patient.name,
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 12),
+                        Text('Ward Room No.: ${patient.wardRoomNo}'),
+                        Text('Age: ${patient.age}'),
+                        Text('Height: ${patient.height} cm'),
+                        Text('Weight: ${patient.weight} kg'),
+                        Text('Blood Type: ${patient.bloodType}'),
+                      ]),
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              _optionBtn(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => CurrentConditionPage(patient: patient)),
+                "Patient's Current Condition",
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => CurrentConditionPage(patient: patient)),
+                ),
               ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 14.0),
-                child: Text("Patient's Current Condition",
-                    style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
+
+              const SizedBox(height: 16),
+
+              _optionBtn(
                 context,
-                MaterialPageRoute(
-                    builder: (_) =>
-                        DoctorPatientHistoryPage(patient: patient)),
+                "Patient's History",
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          DoctorPatientHistoryPage(patient: patient)),
+                ),
               ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 14.0),
-                child:
-                    Text("Patient's History", style: TextStyle(fontSize: 18)),
-              ),
-            ),
+
+              const Spacer(),
+
+              _optionBtn(context, "Home", home),
+            ],
           ),
-          const Spacer(),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: home,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 14.0),
-                child: Text('Home', style: TextStyle(fontSize: 18)),
-              ),
-            ),
+        ),
+      ),
+    );
+  }
+
+  Widget _optionBtn(
+      BuildContext context, String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue.shade600,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        ]),
+        ),
+        child: Text(text,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
       ),
     );
   }

@@ -4,6 +4,7 @@ import '../services/patient_database.dart';
 import 'dose_verification_page.dart';
 import 'verified_history_page.dart';
 import 'feedback_page.dart';
+import 'doctor_patient_overview.dart'; // <-- NEW import for Doctor home
 
 class PharmacistPage extends StatefulWidget {
   const PharmacistPage({super.key});
@@ -15,6 +16,15 @@ class PharmacistPage extends StatefulWidget {
 class _PharmacistPageState extends State<PharmacistPage> {
   String searchToBeVerified = '';
   String searchVerified = '';
+
+  // ===== Home navigation helper =====
+  void _goHome(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const PatientOverviewPage()),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +48,14 @@ class _PharmacistPageState extends State<PharmacistPage> {
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.blue.shade700,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.home),
+              color: Colors.white,
+              tooltip: 'Back to Doctor Home',
+              onPressed: () => _goHome(context), // <-- HOME BUTTON
+            ),
+          ],
           bottom: const TabBar(
             indicatorColor: Colors.white,
             tabs: [
